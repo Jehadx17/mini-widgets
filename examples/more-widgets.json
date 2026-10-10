@@ -1,0 +1,11 @@
+{"widgets":[
+  {"id":"claude-app","type":"icon","label":"Claude app","glyph":"✻",
+   "url":"app:com.anthropic.claude",
+   "background":"#FF202124","text":"#FFFFFFFF","accent":"#FFD97757"},
+  {"id":"google-maps","type":"bar","label":"Search Maps…","glyph":"📍",
+   "url":"https://maps.google.com","package":"com.google.android.apps.maps",
+   "background":"#F2FFFFFF","text":"#5F6368","accent":"#FF1A73E8"},
+  {"id":"whatsapp","type":"icon","label":"WhatsApp","glyph":"💬",
+   "url":"app:com.whatsapp",
+   "background":"#FF25D366","text":"#FFFFFFFF","accent":"#FFFFFFFF"}
+]}
