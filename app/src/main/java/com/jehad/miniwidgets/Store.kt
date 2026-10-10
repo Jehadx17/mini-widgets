@@ -16,7 +16,7 @@ object Store {
            "background":"#F2FFFFFF","text":"#5F6368","accent":"#D97757"},
           {"id":"ask-claude-dark","type":"bar","label":"Ask Claude…","glyph":"✻",
            "url":"https://claude.ai/new","package":"com.anthropic.claude",
-           "background":"#E6202124","text":"#BDC1C6","accent":"#D97757"},
+           "background":"#F23B3B3D","text":"#C4C7C5","accent":"#D97757"},
           {"id":"claude-icon","type":"icon","label":"Claude","glyph":"✻",
            "url":"https://claude.ai/new","package":"com.anthropic.claude",
            "background":"#FFD97757","text":"#FFFFFFFF","accent":"#FFFFFFFF"}
