@@ -12,9 +12,12 @@ import org.json.JSONTokener
  *  "url":"https://claude.ai/new","package":"com.anthropic.claude",
  *  "background":"#F2FFFFFF","text":"#5F6368","accent":"#D97757"}
  *
- * type    "bar" (search-bar style) or "icon" (round 1x1 button)
- * url     link to open, or "app:<package.name>" to just launch an app
+ * type    "bar" (search-bar style), "icon" (round 1x1 button) or
+ *         "today" (4x2 card fed by a check-in/check-out JSON endpoint)
+ * url     link to open, or "app:<package.name>" to just launch an app;
+ *         for "today", the JSON endpoint to fetch
  * package optional: prefer opening the link inside this app
+ * key     "today" only: sent as the X-Api-Key header
  */
 data class WidgetDef(
     val id: String,
@@ -23,6 +26,7 @@ data class WidgetDef(
     val glyph: String,
     val url: String,
     val pkg: String,
+    val key: String,
     val background: Int,
     val text: Int,
     val accent: Int,
@@ -34,6 +38,7 @@ data class WidgetDef(
         .put("glyph", glyph)
         .put("url", url)
         .put("package", pkg)
+        .put("key", key)
         .put("background", hex(background))
         .put("text", hex(text))
         .put("accent", hex(accent))
@@ -54,7 +59,11 @@ data class WidgetDef(
             s.lowercase().replace(Regex("[^a-z0-9]+"), "-").trim('-').ifBlank { "widget" }
 
         fun fromJson(o: JSONObject): WidgetDef {
-            val type = if (str(o, "type", "bar") == "icon") "icon" else "bar"
+            val type = when (str(o, "type", "bar")) {
+                "icon" -> "icon"
+                "today" -> "today"
+                else -> "bar"
+            }
             val label = str(o, "label", "Widget")
             return WidgetDef(
                 id = str(o, "id", "").ifBlank { slug(label) + "-" + type },
@@ -63,6 +72,7 @@ data class WidgetDef(
                 glyph = str(o, "glyph", "✻"),
                 url = str(o, "url", ""),
                 pkg = str(o, "package", ""),
+                key = str(o, "key", ""),
                 background = color(str(o, "background", ""), 0xF2FFFFFF.toInt()),
                 text = color(str(o, "text", ""), 0xFF5F6368.toInt()),
                 accent = color(str(o, "accent", ""), 0xFFD97757.toInt()),

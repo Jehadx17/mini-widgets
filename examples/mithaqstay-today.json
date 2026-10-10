@@ -1,0 +1,4 @@
+{"id":"mithaq-today","type":"today","label":"Mithaqstay","glyph":"✻",
+ "url":"https://mithaqstay.com/api/v1/movements/day",
+ "key":"PASTE_YOUR_mst_KEY_HERE",
+ "background":"#F23B3B3D","text":"#E3E3E3","accent":"#D97757"}

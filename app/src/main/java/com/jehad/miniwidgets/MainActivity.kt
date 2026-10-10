@@ -42,7 +42,7 @@ class MainActivity : Activity() {
         ))
 
         val defs = Store.all(this)
-        listOf("bar" to "Search bars", "icon" to "Round buttons").forEach { (type, heading) ->
+        listOf("today" to "Live cards", "bar" to "Search bars", "icon" to "Round buttons").forEach { (type, heading) ->
             val group = defs.filter { it.type == type }
             if (group.isNotEmpty()) {
                 col.addView(ui.section(heading))
@@ -55,6 +55,18 @@ class MainActivity : Activity() {
     }
 
     private fun test(d: WidgetDef) {
+        if (d.type == "today") {
+            // Testing a feed means fetching it, not opening the API in a browser.
+            toast("Checking ${d.label}…")
+            Thread {
+                val result = Today.fetch(applicationContext, d)
+                Render.refreshAll(applicationContext)
+                runOnUiThread {
+                    toast(result.body?.let { "Works: ${Today.summary(it)} today" } ?: result.error)
+                }
+            }.start()
+            return
+        }
         val target = Render.target(this, d)
         if (target == null) {
             toast("Nothing installed can open this")

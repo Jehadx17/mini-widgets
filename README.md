@@ -29,6 +29,22 @@ Each placed widget uses a *design*. Designs are imported as JSON (file, "Open wi
 
 A single object, a plain array, or `{"widgets":[...]}` are all accepted.
 
+### Today card (`"type": "today"`)
+
+A 4×2 card that fetches `url` every 30 minutes (or on ⟳) with `key` in the
+`X-Api-Key` header, and shows the day's arrivals and departures. Same-day
+turnovers are bold; tapping the card opens the response's `dashboard_url`.
+Expected response (mithaqstay's `/api/v1/movements/day`):
+
+```json
+{"date":"2026-10-11","is_today":true,
+ "checkins":[{"unit":"103","platform":"airbnb","time":"16:00","turnover":false}],
+ "checkouts":[{"unit":"207","platform":"gathern","time":"12:00","turnover":false}],
+ "dashboard_url":"https://mithaqstay.com/?day=2026-10-11"}
+```
+
+See `examples/mithaqstay-today.json`. Tap the design in the app to test the key.
+
 ## Build
 
 **GitHub (no computer needed):** push this folder to a GitHub repo. The *Build APK* action runs automatically; open the run under **Actions** and download `MiniWidgets-apk`.

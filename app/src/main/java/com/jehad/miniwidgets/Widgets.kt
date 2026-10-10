@@ -27,29 +27,45 @@ class BarWidget : BaseWidget()
 class IconWidget : BaseWidget()
 
 object Render {
-    private val PROVIDERS = listOf(BarWidget::class.java, IconWidget::class.java)
+    private val PROVIDERS = listOf(BarWidget::class.java, IconWidget::class.java, TodayWidget::class.java)
 
     fun typeOf(mgr: AppWidgetManager, widgetId: Int): String =
-        if (mgr.getAppWidgetInfo(widgetId)?.provider?.className == IconWidget::class.java.name) "icon"
-        else "bar"
+        when (mgr.getAppWidgetInfo(widgetId)?.provider?.className) {
+            IconWidget::class.java.name -> "icon"
+            TodayWidget::class.java.name -> "today"
+            else -> "bar"
+        }
 
     fun update(c: Context, mgr: AppWidgetManager, widgetId: Int) {
         val type = typeOf(mgr, widgetId)
-        val layout = if (type == "icon") R.layout.widget_icon else R.layout.widget_bar
+        val layout = when (type) {
+            "icon" -> R.layout.widget_icon
+            "today" -> R.layout.widget_today
+            else -> R.layout.widget_bar
+        }
         val v = RemoteViews(c.packageName, layout)
-        val d = Store.defFor(c, widgetId, type)
+        val d = Store.defFor(c, widgetId, type)?.takeIf { it.type == type || type != "today" }
         if (d != null) {
             // Tint the shape with the opaque color, then apply its alpha separately.
             v.setInt(R.id.bg, "setColorFilter", d.background or 0xFF000000.toInt())
             v.setInt(R.id.bg, "setImageAlpha", Color.alpha(d.background))
-            v.setTextViewText(R.id.glyph, d.glyph)
-            v.setTextColor(R.id.glyph, d.accent)
-            if (type == "bar") {
-                v.setTextViewText(R.id.label, d.label)
-                v.setTextColor(R.id.label, d.text)
-            }
             v.setContentDescription(R.id.root, d.label)
-            v.setOnClickPendingIntent(R.id.root, pending(c, widgetId, d))
+            if (type == "today") {
+                Today.fill(c, v, d, widgetId)
+            } else {
+                v.setTextViewText(R.id.glyph, d.glyph)
+                v.setTextColor(R.id.glyph, d.accent)
+                if (type == "bar") {
+                    v.setTextViewText(R.id.label, d.label)
+                    v.setTextColor(R.id.label, d.text)
+                }
+                v.setOnClickPendingIntent(R.id.root, pending(c, widgetId, d))
+            }
+        } else if (type == "today") {
+            // The layout's sample rows are for the widget picker preview only.
+            v.setTextViewText(R.id.day, "")
+            v.setTextViewText(R.id.ins, "Import a Today design in Mini Widgets")
+            v.setTextViewText(R.id.outs, "")
         }
         mgr.updateAppWidget(widgetId, v)
     }
